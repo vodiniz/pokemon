@@ -1,35 +1,54 @@
 use crate::player;
-use bevy::prelude::{Commands, OrthographicCameraBundle, Query, Transform, Without, With};
-use bevy_rapier2d::prelude::RigidBody;
+use bevy::{prelude::*, render::camera};
 
+
+#[derive(Component)]
+//tag maincamera for future query
+pub struct MainCamera;
 
 
 //spawn basic 2d camera
 pub fn setup_camera(mut commands: Commands) {
-    let camera = OrthographicCameraBundle::new_2d();
-    commands.spawn_bundle(camera);
+
+    let mut camera = OrthographicCameraBundle::new_2d();
+    camera.orthographic_projection.scaling_mode = bevy::render::camera::ScalingMode::FixedHorizontal;
+    camera.transform.scale = Vec3::new(
+        16. * 8.,
+        16. * 8.,
+        2.
+    );
+    
+
+    commands.spawn_bundle(camera)
+    .insert(MainCamera);
 }
 
-
-//MUST INSERT TRANSFORM INTO CAMERA FOR MODIFYING TRANSLATION
+//Camera system to follow player translation.
+//QUery mainCamera mutable transform and player transform.
 pub fn follow_player(
-    mut camera_query: Query<(
-    &mut bevy::render::camera::OrthographicProjection,
-    &mut Transform,
-    ),
-    Without<player::Player>
-    >,
-    player_position: Query<& Transform, (With<player::Player>, With<RigidBody>)>
-){
+    mut camera_query: Query<&mut Transform, With<MainCamera>>,
+    player_query: Query<&Transform, (With<player::Player>,Without<MainCamera>)>,
+) {
 
 
-    for position in player_position.iter() {
-        if let Ok((_, mut camera_transform)) = camera_query.get_single_mut() {
-            println!("camera");
-            // dbg!(&camera_query);
-            // dbg!("____________________________________");
-            camera_transform.translation.x = position.translation.x;
-            camera_transform.translation.y = position.translation.y;
+    //check if transform translation result has a value and assign it;
+    if let Ok(Transform {
+        translation: player_translation,
+        ..
+    }) = player_query.get_single(){
+
+        // check if camera transform result is ok and modify it acording to player
+        if let Ok(mut camera_transform) = camera_query.get_single_mut() {
+            camera_transform.translation.x = player_translation.x;
+            camera_transform.translation.y = player_translation.y;
         }
     }
 }
+
+
+
+//     let mut camera_transform = camera_query.single_mut();
+
+//     let player_transform = player_query.single();
+
+// }

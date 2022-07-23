@@ -1,8 +1,7 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
-const DEFAULT_PLAYER_VELOCITY:f32 = 100.;
-
+const DEFAULT_PLAYER_VELOCITY: f32 = 100.;
 
 #[derive(Component)]
 pub struct Player;
@@ -23,7 +22,10 @@ pub fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>) {
             angvel: 0.,
         })
         .insert(GravityScale(0.))
-        .insert_bundle(TransformBundle::from(Transform::from_xyz(0.0, 0.0, 10.0)))
+        .insert_bundle(TransformBundle::from(Transform::from_xyz(
+            2. * 16. + 15. / 2.,
+            2. * 16. + 19. / 2.,
+            10.0)))
         .insert(Sleeping::disabled())
         .insert(Ccd::enabled());
 }
@@ -32,15 +34,13 @@ pub fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>) {
 // can probably change to a more idiomatic
 //way with match but had some problems when trying
 
-
 pub fn player_movement(keyboard_input: Res<Input<KeyCode>>, mut velocities: Query<&mut Velocity>) {
-
     for mut vel in velocities.iter_mut() {
         let key = keyboard_input.get_pressed().next();
         if let Some(key) = key {
             match key {
                 KeyCode::Up => vel.linvel = Vec2::new(0., DEFAULT_PLAYER_VELOCITY),
-                KeyCode::Down =>  vel.linvel = Vec2::new(0.0, -DEFAULT_PLAYER_VELOCITY),
+                KeyCode::Down => vel.linvel = Vec2::new(0.0, -DEFAULT_PLAYER_VELOCITY),
                 KeyCode::Left => vel.linvel = Vec2::new(-DEFAULT_PLAYER_VELOCITY, 0.),
                 KeyCode::Right => vel.linvel = Vec2::new(DEFAULT_PLAYER_VELOCITY, 0.),
                 _ => (),
@@ -50,23 +50,3 @@ pub fn player_movement(keyboard_input: Res<Input<KeyCode>>, mut velocities: Quer
         }
     }
 }
-
-
-//OLD PLAYER MOVEMENT
-//
-// pub fn player_movement2(keyboard_input: Res<Input<KeyCode>>, mut velocities: Query<&mut Velocity>) {
-//     for mut vel in velocities.iter_mut() {
-//         if keyboard_input.pressed(KeyCode::Up) {
-//             vel.linvel = Vec2::new(0., 2.);
-//         } else if keyboard_input.pressed(KeyCode::Down) {
-//             vel.linvel = Vec2::new(0.0, -2.);
-//         } else if keyboard_input.pressed(KeyCode::Left) {
-//             vel.linvel = Vec2::new(-2., 0.);
-//         } else if keyboard_input.pressed(KeyCode::Right) {
-//             vel.linvel = Vec2::new(2., 0.);
-//             dbg!("Right");
-//         } else {
-//             vel.linvel = Vec2::new(0., 0.);
-//         }
-//     }
-// }

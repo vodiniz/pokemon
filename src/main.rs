@@ -2,13 +2,13 @@ use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 use bevy_editor_pls::*;
 use bevy_rapier2d::prelude::*;
-
+use player::player_movement;
 
 //import all modules
 mod camera;
 mod ldtk_map;
 mod player;
-
+mod collisions;
 
 //Main game function
 fn run() {
@@ -35,17 +35,23 @@ fn run() {
         //
         //systems running at every frame
         .add_system(player::player_movement)
-        .add_system(camera::follow_player)
+        .add_system(camera::follow_player.after(player_movement))
         //
         //
         //register ldtk int cell to components
-        .register_ldtk_int_cell::<ldtk_map::FloorBundle>(1)
-        .register_ldtk_int_cell::<ldtk_map::WallBundle>(2)
-        .register_ldtk_int_cell::<ldtk_map::WaterBundle>(3)
-        .register_ldtk_int_cell::<ldtk_map::GrassBundle>(4)
-        .register_ldtk_int_cell::<ldtk_map::DoorBundle>(5)
-        .register_ldtk_int_cell::<ldtk_map::PlatformBundle>(6)
+        .register_ldtk_int_cell::<collisions::FloorBundle>(1)
+        .register_ldtk_int_cell::<collisions::WallBundle>(2)
+        .register_ldtk_int_cell::<collisions::WaterBundle>(3)
+        .register_ldtk_int_cell::<collisions::GrassBundle>(4)
+        .register_ldtk_int_cell::<collisions::DoorBundle>(5)
+        .register_ldtk_int_cell::<collisions::PlatformBundle>(6)
+
+
+        //System to add collisions to ldkt int cells
+        .add_system(collisions::assign_wall_collision)
         .run();
+
+
 }
 
 fn main() {
