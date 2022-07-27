@@ -13,10 +13,12 @@ pub fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>) {
             texture: asset_server.load("./sprites/characters/hero_simple.png"), // get the texture handle from file
             ..default()
         })
+        .insert(Name::new("Player"))
         .insert(Player)
         //add rigid body to player (for rapier simulations),
         .insert(RigidBody::Dynamic)
-        .insert(Collider::cuboid(1., 2.))
+        .insert(Collider::cuboid(8., 9.5))
+        .insert(LockedAxes::ROTATION_LOCKED)
         .insert(Velocity {
             linvel: Vec2::new(0., 0.),
             angvel: 0.,
@@ -25,7 +27,8 @@ pub fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>) {
         .insert_bundle(TransformBundle::from(Transform::from_xyz(
             2. * 16. + 15. / 2.,
             2. * 16. + 19. / 2.,
-            10.0)))
+            10.0,
+        )))
         .insert(Sleeping::disabled())
         .insert(Ccd::enabled());
 }

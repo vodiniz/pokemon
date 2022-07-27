@@ -1,6 +1,5 @@
 use bevy::prelude::*;
-use bevy_ecs_ldtk::{LdtkIntCell, LdtkWorldBundle};
-
+use bevy_ecs_ldtk::LdtkWorldBundle;
 
 //load and spawn ldk map from file
 pub fn load_map(mut commands: Commands, asset_server: Res<AssetServer>) {

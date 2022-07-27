@@ -6,9 +6,9 @@ use player::player_movement;
 
 //import all modules
 mod camera;
+mod collisions;
 mod ldtk_map;
 mod player;
-mod collisions;
 
 //Main game function
 fn run() {
@@ -45,13 +45,9 @@ fn run() {
         .register_ldtk_int_cell::<collisions::GrassBundle>(4)
         .register_ldtk_int_cell::<collisions::DoorBundle>(5)
         .register_ldtk_int_cell::<collisions::PlatformBundle>(6)
-
-
         //System to add collisions to ldkt int cells
         .add_system(collisions::assign_wall_collision)
         .run();
-
-
 }
 
 fn main() {
